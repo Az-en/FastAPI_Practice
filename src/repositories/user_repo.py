@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy.orm import Session
 from src.models.user import User
 from src.schemas.user import UserCreate
@@ -16,13 +18,13 @@ class UserRepository:
         self.session.refresh(db_user)
         return db_user
     
-    def get_user(self, user_id: str) -> User | None:
+    def get_user(self, user_id: uuid.UUID) -> User | None:
         return self.session.query(User).filter(User.id == user_id).first()
     
     def get_user_by_email(self, user_email: str) -> User | None:
         return self.session.query(User).filter(User.email == user_email).first()
     
-    def delete_user(self,user_id: str):
+    def delete_user(self,user_id: uuid.UUID):
         user = self.session.query(User).filter(User.id == user_id).first()
 
         if not user:

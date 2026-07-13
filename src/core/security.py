@@ -28,3 +28,16 @@ def create_jwt(payload: JWTPayload):
     token = jwt.encode(payload_dict, SECRET, algorithm="HS256")
 
     return token
+
+def decode_jwt(token: str) -> JWTPayload:
+    try:
+        decoded_payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+        
+        return JWTPayload(
+            id=uuid.UUID(decoded_payload["id"]),
+            role=decoded_payload["role"]
+        )
+    except jwt.ExpiredSignatureError:
+        raise ValueError("Token has expired.")
+    except jwt.InvalidTokenError:
+        raise ValueError("Invalid token.")
