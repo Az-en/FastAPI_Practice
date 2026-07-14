@@ -21,6 +21,16 @@ def read_user(user_id: uuid.UUID, db: Session = Depends(get_db),current_user: Us
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+@userRouter.get("/", response_model=list[UserResponse])
+def get_all_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    repo = UserRepository(db)
+    users = repo.get_all_users()
+
+    if not users:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Users not found")
+
+    return users
+
 @userRouter.post("/login",response_model=UserLoginResponse)
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     repo = UserRepository(db)
@@ -44,6 +54,6 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
         "id": user.id,
         "username": user.username,
         "email": user.email,
-        "successful_login": True,
-        "token": token
+        "token": token,
+        "role": user.role
     }

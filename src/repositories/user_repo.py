@@ -1,5 +1,5 @@
 import uuid
-
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from src.models.user import User
 from src.schemas.user import UserCreate
@@ -19,6 +19,11 @@ class UserRepository:
     
     def get_user(self, user_id: uuid.UUID) -> User | None:
         return self.session.query(User).filter(User.id == user_id).first()
+    
+    def get_all_users(self) -> User | None:
+        query = text("SELECT * FROM users;")
+        result = self.session.execute(query)
+        return result.mappings().all()
     
     def get_user_by_email(self, user_email: str) -> User | None:
         return self.session.query(User).filter(User.email == user_email).first()
@@ -43,11 +48,9 @@ if __name__ == "__main__":
     try:
         repo = UserRepository(db)
         
-        # 2. Convert your string to a UUID object before passing it!
-        test_id = uuid.UUID("d521ef99b68d4924a465fe34e0de7128")
         
-        result = repo.delete_user(test_id)
-        print(f"User deleted: {result}")
+        result = repo.get_all_users()
+        print(f"{result}")
         
     finally:
         # 3. Always close the session when done

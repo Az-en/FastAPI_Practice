@@ -2,11 +2,9 @@ import enum
 import uuid
 from sqlalchemy import Column, Uuid, String, Enum
 from src.core.database import Base
+from src.schemas.user import UserRole
 
 
-class UserRole(str, enum.Enum):
-    TEACHER = "teacher"
-    STUDENT = "student"
 class User(Base):
     __tablename__ = "users"
 

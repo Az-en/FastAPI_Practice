@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 import uuid
+import enum
 class UserBase(BaseModel):
     username: str
     email: str
@@ -10,14 +11,18 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: uuid.UUID
-
+    role: str | None
     class Config:
         from_attributes = True
+    
 
 class UserLogin(BaseModel):
     email: str
     password: str
 
 class UserLoginResponse(UserResponse):
-    successful_login: bool
     token: str
+
+class UserRole(str, enum.Enum):
+    TEACHER = "teacher"
+    STUDENT = "student"
