@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from src.models.user import User
 from src.schemas.user import UserCreate
 from src.core.security import hash_password
-from src.api.dependencies import get_db
 
 class UserRepository:
     def __init__(self, session: Session):
