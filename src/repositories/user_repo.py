@@ -27,6 +27,20 @@ class UserRepository:
     
     def get_user_by_email(self, user_email: str) -> User | None:
         return self.session.query(User).filter(User.email == user_email).first()
+
+    def test(self):
+        query = text("UPDATE alembic_version SET version_num = :new_version;")
+        
+        # 2. Execute the query with your new migration ID
+        self.session.execute(query, {"new_version": "f5a48bcc8c6f"})
+        
+        # 3. Commit the transaction to save the changes to app.db
+        self.session.commit()
+        
+        # 4. (Optional) Read it back to verify it worked
+        verify_query = text("SELECT * FROM alembic_version;")
+        result = self.session.execute(verify_query)
+        return result.mappings().all()
     
     def delete_user(self,user_id: uuid.UUID):
         user = self.session.query(User).filter(User.id == user_id).first()
@@ -49,7 +63,7 @@ if __name__ == "__main__":
         repo = UserRepository(db)
         
         
-        result = repo.get_all_users()
+        result = repo.test()
         print(f"{result}")
         
     finally:
