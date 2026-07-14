@@ -28,26 +28,22 @@ class UserRepository:
     def get_user_by_email(self, user_email: str) -> User | None:
         return self.session.query(User).filter(User.email == user_email).first()
 
-    def test(self):
-        query = text("UPDATE alembic_version SET version_num = :new_version;")
+    # def test(self):
+    #     query = text("UPDATE alembic_version SET version_num = :new_version;")
         
-        # 2. Execute the query with your new migration ID
-        self.session.execute(query, {"new_version": "f5a48bcc8c6f"})
+    #     # 2. Execute the query with your new migration ID
+    #     self.session.execute(query, {"new_version": "f5a48bcc8c6f"})
         
-        # 3. Commit the transaction to save the changes to app.db
-        self.session.commit()
+    #     # 3. Commit the transaction to save the changes to app.db
+    #     self.session.commit()
         
-        # 4. (Optional) Read it back to verify it worked
-        verify_query = text("SELECT * FROM alembic_version;")
-        result = self.session.execute(verify_query)
-        return result.mappings().all()
+    #     # 4. (Optional) Read it back to verify it worked
+    #     verify_query = text("SELECT * FROM alembic_version;")
+    #     result = self.session.execute(verify_query)
+    #     return result.mappings().all()
     
     def delete_user(self,user_id: uuid.UUID):
-        user = self.session.query(User).filter(User.id == user_id).first()
-
-        if not user:
-            return False
-        self.session.delete(user)
+        user = self.session.query(User).filter(User.id == user_id).delete(synchronize_session=False)
         self.session.commit()
         
         return True
@@ -62,9 +58,11 @@ if __name__ == "__main__":
     try:
         repo = UserRepository(db)
         
+        # Wrap the string in uuid.UUID()
+        user_uuid = uuid.UUID("2f6d7deafd0148429ae6b9747cdfda6b")
         
-        result = repo.test()
-        print(f"{result}")
+        result = repo.delete_user(user_uuid)
+        print(f"Deleted successfully: {result}")
         
     finally:
         # 3. Always close the session when done

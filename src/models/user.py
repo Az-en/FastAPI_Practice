@@ -12,4 +12,4 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String,nullable=False)
-    role = Column(Enum(UserRole),nullable=True)
+    role = Column(Enum(UserRole, validate_strings=True), nullable=False)
