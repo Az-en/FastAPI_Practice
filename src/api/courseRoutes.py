@@ -1,7 +1,7 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from src.api.dependencies import get_db, get_current_user
+from src.api.dependencies import get_db, get_current_user,get_teacher_user
 from src.schemas.course import CourseResponse, CourseCreate, CourseUpdate
 from src.repositories.course_repo import CourseRepository
 from src.repositories.user_repo import UserRepository
@@ -37,7 +37,7 @@ def create_course(course_in:CourseCreate, db: Session = Depends(get_db)):
 
 
 @courseRouter.get("/", response_model=list[CourseResponse])
-def get_all_courses(db: Session = Depends(get_db)):
+def get_all_courses(db: Session = Depends(get_db),current_user = Depends(get_teacher_user)):
     user_repo = UserRepository(db)
     course_repo = CourseRepository(db)
     ser = CourseService(user_repo=user_repo, course_repo=course_repo)

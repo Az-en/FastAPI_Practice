@@ -43,3 +43,15 @@ def get_current_user(
         raise credentials_exception
         
     return user
+
+def get_teacher_user(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    # If the user exists but isn't a teacher, raise 403 Forbidden
+    role_value = getattr(current_user.role, "value", current_user.role)
+    if str(role_value).lower() != "teacher":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this resource."
+        )
+    return current_user

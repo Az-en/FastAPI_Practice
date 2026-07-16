@@ -4,7 +4,7 @@ import uuid
 from pwdlib import PasswordHash
 from pwdlib.hashers.bcrypt import BcryptHasher
 from pydantic import BaseModel
-from config import SECRET
+from src.core.config import SECRET
 class JWTPayload(BaseModel):
     id: uuid.UUID
     role: str
