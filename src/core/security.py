@@ -4,11 +4,11 @@ import uuid
 from pwdlib import PasswordHash
 from pwdlib.hashers.bcrypt import BcryptHasher
 from pydantic import BaseModel
+from config import SECRET
 class JWTPayload(BaseModel):
     id: uuid.UUID
     role: str
 
-SECRET = "2df05dd0070ef5e7b90025a398ff0c62e649b3e9f51c6c0210e096d94b830986"
 
 hasher = PasswordHash((BcryptHasher(),))
 
