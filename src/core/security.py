@@ -4,7 +4,8 @@ import uuid
 from pwdlib import PasswordHash
 from pwdlib.hashers.bcrypt import BcryptHasher
 from pydantic import BaseModel
-from src.core.config import SECRET
+from src.core.config import config
+
 class JWTPayload(BaseModel):
     id: uuid.UUID
     role: str
@@ -24,14 +25,14 @@ def create_jwt(payload: JWTPayload):
     if not payload_dict.get("id") or not payload_dict.get("role"):
         raise ValueError("Invalid payload values passed: 'id' and 'role' are required.")
     if "exp" not in payload_dict:
-        payload_dict["exp"] = datetime.now(timezone.utc) + timedelta(hours=1)
-    token = jwt.encode(payload_dict, SECRET, algorithm="HS256")
+        payload_dict["exp"] = datetime.now(timezone.utc) + timedelta(hours=config.ACCESS_TOKEN_EXPIRE_HOURS)
+    token = jwt.encode(payload_dict, config.SECRET, algorithm=config.JWT_ALGORITHM)
 
     return token
 
 def decode_jwt(token: str) -> JWTPayload:
     try:
-        decoded_payload = jwt.decode(token, SECRET, algorithms=["HS256"])
+        decoded_payload = jwt.decode(token, config.SECRET, algorithms=[config.JWT_ALGORITHM])
         
         return JWTPayload(
             id=uuid.UUID(decoded_payload["id"]),
