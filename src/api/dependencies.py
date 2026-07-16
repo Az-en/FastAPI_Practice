@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from src.repositories.user_repo import UserRepository
 from src.core.security import decode_jwt
+from src.core.exceptions import PermissionDeniedError
 import logging
 logger = logging.getLogger(__name__)
 
@@ -50,8 +51,5 @@ def get_teacher_user(
     # If the user exists but isn't a teacher, raise 403 Forbidden
     role_value = getattr(current_user.role, "value", current_user.role)
     if str(role_value).lower() != "teacher":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to access this resource."
-        )
+        raise PermissionDeniedError("You do not have permission to access this resource.")
     return current_user
