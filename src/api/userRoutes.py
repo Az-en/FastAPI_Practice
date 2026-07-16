@@ -54,10 +54,6 @@ def read_user(user_id: uuid.UUID, db: Session = Depends(get_db),current_user: Us
 def get_all_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     repo = UserRepository(db)
     users = repo.get_all_users()
-
-    if not users:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Users not found")
-
     return [_serialize_user(user) for user in users]
 
 @userRouter.post("/login",response_model=UserLoginResponse)
