@@ -9,4 +9,11 @@ wheels/
 # Virtual environments
 .venv
 .env
+# Databases
 app.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Development Roadmap & Local Notes
+FASTAPI_ROADMAP.md
