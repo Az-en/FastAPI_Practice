@@ -42,10 +42,6 @@ def get_all_courses(db: Session = Depends(get_db),current_user = Depends(get_tea
     course_repo = CourseRepository(db)
     ser = CourseService(user_repo=user_repo, course_repo=course_repo)
     courses = ser.get_all_courses()
-
-    if not courses:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Courses not found")
-
     return [_serialize_course(course) for course in courses]
 
 

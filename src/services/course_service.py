@@ -3,7 +3,7 @@ from src.schemas.course import CourseCreate, CourseUpdate
 from src.repositories.user_repo import UserRepository
 from src.repositories.course_repo import CourseRepository
 from fastapi import HTTPException,status
-
+from src.core.exceptions import ConflictError,NotFoundError,PermissionDeniedError
 
 class CourseService:
     def __init__(self,user_repo: UserRepository, course_repo: CourseRepository):
@@ -13,17 +13,11 @@ class CourseService:
     def _ensure_instructor(self, instructor_id: UUID):
         user = self.user_repo.get_user(instructor_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User {instructor_id} was not found.",
-            )
+            raise NotFoundError("User",user_id= instructor_id)
 
         role = getattr(user.role, "value", user.role)
         if str(role).lower() != "teacher":
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"User {instructor_id} is not a valid instructor.",
-            )
+            raise PermissionDeniedError(f"User: {instructor_id} is not an Instructor")
 
         return user
 
