@@ -1,9 +1,15 @@
-import os
-from dotenv import load_dotenv
-load_dotenv()
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-SECRET = os.getenv("SECRET")
+class Config(BaseSettings):
+    SECRET: str
+    DATABASE_URL: str
+    ENVIRONMENT: str = "development" 
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_HOURS: int = 1
 
-
-# if __name__ == "__main__":
-#     print(SECRET)
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
+config = Config()
